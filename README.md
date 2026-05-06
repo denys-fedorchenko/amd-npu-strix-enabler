@@ -1,22 +1,42 @@
-# AMD XDNA NPU Enabler (Strix Point / Krackan) for Ubuntu 26.04
+# AMD Ryzen AI NPU Enabler (Ubuntu 26.04)
 
-![Status](https://img.shields.io/badge/Status-Validated-brightgreen)
-![OS](https://img.shields.io/badge/OS-Ubuntu%2026.04%20LTS-orange)
+> [!CAUTION]
+> **CRITICAL DEPENDENCY: PYTHON 3.14**
+> The XRT v2.23.0 binaries are compiled specifically for the **Python 3.14** binary interface. [cite: 1]
+> Using Conda environments with Python 3.13 or older will result in a `ModuleNotFoundError` for `pyxrt`. [cite: 2, 3]
 
-This is the first public repository providing validated drivers and runtime for **AMD NPU (NPU 4, aie2p)** on Ubuntu 26.04 LTS.
+## 🖥️ System Requirements
+* **Hardware**: AMD Ryzen processor with integrated NPU (Zen 5 / Ryzen AI 7 350 / Krackan). [cite: 4]
+* **OS**: Ubuntu 24.04 / 26.04 LTS (Kernel 6.8 - 7.0+). [cite: 5]
+* **Dependencies**: Local XRT v2.23.0 archives placed in the src/ folder. [cite: 6]
 
-## 🇺🇦 Support Ukraine
-This project was developed in Ukraine. If this helps you, please consider supporting:
-* [Come Back Alive Foundation](https://savelife.in.ua/en/donate-en/)
-* [Direct Monobank Jar](https://send.monobank.ua/XXXXX)
+## 🚀 Core Logic & Architecture
+This toolkit implements a **Zero-Conflict SRE Architecture**: [cite: 7]
+1. **Compatibility Layer**: Generates an xrt-base-dummy package to satisfy apt dependencies and prevent purges during upgrade. [cite: 8, 10]
+2. **Direct Deployment**: Portable extraction into /opt/xilinx/xrt/ to isolate the NPU runtime from system libraries. [cite: 11]
+3. **Permissions**: UDEV rules set /dev/accel/accel0 to 0666 for non-root operation and removes memlock limits. [cite: 12, 13]
 
-## 🚀 Current Milestones
-- Driver: amdxdna v0.11.0
-- XRT: v2.23.0 (GLIBC 2.43)
-- Performance: 4.3 TOPS GEMM
+## 📦 Installation & Usage
+1. Ensure install.sh, uninstall.sh, and the src/ folder are in the same directory. [cite: 14]
+2. Run the deployment: [cite: 15]
+   chmod +x install.sh
+   ./install.sh
 
-## 📦 Installation
-Download `.deb` packages from the Releases section.
-```bash
-sudo dpkg -i amdxdna-driver-strix.deb
-sudo dpkg -i xrt-runtime-2.23.deb
+*REBOOT is mandatory to apply kernel module parameters and memory limits.* [cite: 15]
+
+## 🔍 Verification
+View hardware status:
+xrt-smi examine [cite: 16]
+
+Python 3.14 API Test:
+/usr/bin/python3 -c "import pyxrt; print(f'NPU Active: {pyxrt.device(0).get_info(pyxrt.xrt_info_device.name)}')" [cite: 16]
+
+## 🇺🇦 Support & Credits
+This project was developed in Ukraine 🇺🇦 — where technical freedom and innovation drive our resilience.
+
+If this toolkit saved your time or enabled your research, please consider supporting the defenders of this freedom:
+
+* **[Птахи Мадяра (Robert Brovdi Foundation)](https://magyarbirds.army/)** — Direct support for advanced aerial reconnaissance and drone systems.
+
+---
+*Freedom is a technical requirement.*
